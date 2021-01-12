@@ -92,9 +92,15 @@ function update(): void {
   const url = readProblemUrl();
 
   const problem = lookupProblemFromUrl(url, data);
+  try {
+    new URL(url);
+  } catch (err) {
+    writeProblemName("error");
+    writeGeneratedCode("not a URL: " + JSON.stringify(url) + '\n', "plaintext");
+  }
   if (problem === null) {
     writeProblemName("error");
-    writeGeneratedCode("invalid URL: " + JSON.stringify(url), "plaintext");
+    writeGeneratedCode("unsupported URL: " + JSON.stringify(url) + '\n\nPlease use the command-line version instead: https://github.com/online-judge-tools/template-generator', "plaintext");
     return;
   }
   writeProblemName(problem.title);
@@ -114,12 +120,11 @@ function update(): void {
 }
 
 document.addEventListener("DOMContentLoaded", (event) => {
-  const input = document.getElementById("urlInput");
-  input.addEventListener("input", update);
-
   const form = document.getElementById("generateForm");
   form.addEventListener("submit", update);
 
   const select = document.getElementById("templateSelect");
   select.addEventListener("change", update);
+
+  update();
 });
