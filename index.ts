@@ -39,7 +39,7 @@ function writeProblemName(name: string): void {
 
 function writeGeneratedCode(result: string, lang: string) {
   const code = document.createElement("code");
-  code.innerText = result;
+  code.textContent = result;
   code.classList.add("language-" + lang);
   hljs.highlightBlock(code);
 
