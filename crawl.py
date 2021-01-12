@@ -37,7 +37,7 @@ def list_atcoder_problems() -> List[Problem]:
 
 
 def list_codeforces_problems() -> List[Problem]:
-    resp = requests.get('rehttps://codeforces.com/api/problemset.problems')
+    resp = requests.get('https://codeforces.com/api/problemset.problems')
     resp.raise_for_status()
     data = json.loads(resp.content)
     assert data['status'] == 'OK'
@@ -101,8 +101,8 @@ def generate(url: str) -> Dict[str, str]:
 
 def update(generated: Dict[str, Dict[str, Any]]) -> None:
     problems: List[Problem] = []
-    # problems += list_atcoder_problems()
-    # problems += list_codeforces_problems()
+    problems += list_atcoder_problems()
+    problems += list_codeforces_problems()
     problems += list_library_checker_problems()
     random.shuffle(problems)
 
