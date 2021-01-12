@@ -96,11 +96,25 @@ function update(): void {
     new URL(url);
   } catch (err) {
     writeProblemName("error");
-    writeGeneratedCode("not a URL: " + JSON.stringify(url) + '\n', "plaintext");
+    writeGeneratedCode("not a URL: " + JSON.stringify(url) + "\n", "plaintext");
   }
   if (problem === null) {
     writeProblemName("error");
-    writeGeneratedCode("unsupported URL: " + JSON.stringify(url) + '\n\nPlease use the command-line version instead: https://github.com/online-judge-tools/template-generator', "plaintext");
+    let message =
+      "Please use the command-line version instead: https://github.com/online-judge-tools/template-generator";
+    if (
+      !url.match(/\batcoder\b/) &&
+      !url.match(/\bcodeforces\b/) &&
+      !url.match(/\byosupo\b/)
+    ) {
+      message =
+        "Currently this web-interface only supports problems of AtCoder (atcoder.jp), Codeforces (codeforces.com), and Library-Checker (judge.yosupo.jp).\n" +
+        message;
+    }
+    writeGeneratedCode(
+      "unsupported URL: " + JSON.stringify(url) + "\n\n" + message,
+      "plaintext"
+    );
     return;
   }
   writeProblemName(problem.title);
