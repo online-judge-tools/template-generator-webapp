@@ -137,6 +137,4 @@ document.addEventListener("DOMContentLoaded", (event) => {
 
   const select = document.getElementById("templateSelect");
   select.addEventListener("change", update);
-
-  update();
 });
