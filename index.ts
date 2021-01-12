@@ -9,7 +9,7 @@ interface Problem {
 function loadPrecomputedData(): Problem[] {
   const url = "data.json";
   const req = new XMLHttpRequest();
-  req.open("GET", url, true);
+  req.open("GET", url, false);
   req.send();
   if (req.status !== 200) {
     throw new Error(req.statusText);
@@ -17,15 +17,13 @@ function loadPrecomputedData(): Problem[] {
   return JSON.parse(req.responseText);
 }
 
+let cache = null;
+
 function loadPrecomputedDataWithCache(): Problem[] {
-  const key = "cache";
-  const cache = JSON.parse(sessionStorage.getItem(key)) as Problem[];
-  if (cache) {
-    return cache;
+  if (cache === null) {
+    cache = loadPrecomputedData();
   }
-  const data = loadPrecomputedData();
-  sessionStorage.setItem(key, JSON.stringify(data));
-  return data;
+  return cache;
 }
 
 function readProblemUrl(): string {
@@ -42,7 +40,7 @@ function writeProblemName(name: string): void {
 function writeGeneratedCode(result: string, lang: string) {
   const code = document.createElement("code");
   code.innerText = result;
-  code.classList.add(lang);
+  code.classList.add("language-" + lang);
   hljs.highlightBlock(code);
 
   const pre = document.createElement("pre");
@@ -130,7 +128,7 @@ function update(): void {
   }
   const result = problem.template[template];
   const lang = getLanguageFromTemplate(template);
-  writeGeneratedCode(result, template);
+  writeGeneratedCode(result, lang);
 }
 
 document.addEventListener("DOMContentLoaded", (event) => {
