@@ -110,5 +110,4 @@ document.addEventListener("DOMContentLoaded", function (event) {
     form.addEventListener("submit", update);
     var select = document.getElementById("templateSelect");
     select.addEventListener("change", update);
-    update();
 });
