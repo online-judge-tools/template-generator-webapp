@@ -26,7 +26,7 @@ function writeProblemName(name) {
 }
 function writeGeneratedCode(result, lang) {
     var code = document.createElement("code");
-    code.innerText = result;
+    code.textContent = result;
     code.classList.add("language-" + lang);
     hljs.highlightBlock(code);
     var pre = document.createElement("pre");
