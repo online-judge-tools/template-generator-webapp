@@ -32,9 +32,18 @@ function readProblemUrl(): string {
   return input.value ? input.value : defaultUrl;
 }
 
-function writeProblemName(name: string): void {
+function writeProblemName(name: string | null): void {
   const input = document.getElementById("nameInput") as HTMLInputElement;
-  input.value = name;
+  if (name === null) {
+    input.value = "error";
+  } else {
+    input.value = name;
+  }
+}
+
+function writeProblemUrl(url: string): void {
+  const anchor = document.getElementById("nameAnchor") as HTMLAnchorElement;
+  anchor.href = url;
 }
 
 function writeGeneratedCode(result: string, lang: string) {
@@ -89,22 +98,29 @@ function update(): void {
   const data = loadPrecomputedDataWithCache();
   const url = readProblemUrl();
 
-  const problem = lookupProblemFromUrl(url, data);
   try {
     new URL(url);
   } catch (err) {
-    writeProblemName("error");
+    writeProblemName(null);
     writeGeneratedCode("not a URL: " + JSON.stringify(url) + "\n", "plaintext");
+    return;
   }
+  writeProblemUrl(url);
+
+  const problem = lookupProblemFromUrl(url, data);
   if (problem === null) {
-    writeProblemName("error");
+    writeProblemName(null);
     let message =
       "Please use the command-line version instead: https://github.com/online-judge-tools/template-generator";
     if (
-      !url.match(/\batcoder\b/) &&
-      !url.match(/\bcodeforces\b/) &&
-      !url.match(/\byosupo\b/)
+      url.match(/\batcoder\b/) ||
+      url.match(/\bcodeforces\b/) ||
+      url.match(/\byosupo\b/)
     ) {
+      message =
+        "Probably the data for your problem is not pre-computed yet. This web-interface only supports old problems.\n" +
+        message;
+    } else {
       message =
         "Currently this web-interface only supports problems of AtCoder (atcoder.jp), Codeforces (codeforces.com), and Library-Checker (judge.yosupo.jp).\n" +
         message;
