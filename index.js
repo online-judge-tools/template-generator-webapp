@@ -22,7 +22,16 @@ function readProblemUrl() {
 }
 function writeProblemName(name) {
     var input = document.getElementById("nameInput");
-    input.value = name;
+    if (name === null) {
+        input.value = "error";
+    }
+    else {
+        input.value = name;
+    }
+}
+function writeProblemUrl(url) {
+    var anchor = document.getElementById("nameAnchor");
+    anchor.href = url;
 }
 function writeGeneratedCode(result, lang) {
     var code = document.createElement("code");
@@ -73,20 +82,27 @@ function getLanguageFromTemplate(template) {
 function update() {
     var data = loadPrecomputedDataWithCache();
     var url = readProblemUrl();
-    var problem = lookupProblemFromUrl(url, data);
     try {
         new URL(url);
     }
     catch (err) {
-        writeProblemName("error");
+        writeProblemName(null);
         writeGeneratedCode("not a URL: " + JSON.stringify(url) + "\n", "plaintext");
+        return;
     }
+    writeProblemUrl(url);
+    var problem = lookupProblemFromUrl(url, data);
     if (problem === null) {
-        writeProblemName("error");
+        writeProblemName(null);
         var message = "Please use the command-line version instead: https://github.com/online-judge-tools/template-generator";
-        if (!url.match(/\batcoder\b/) &&
-            !url.match(/\bcodeforces\b/) &&
-            !url.match(/\byosupo\b/)) {
+        if (url.match(/\batcoder\b/) ||
+            url.match(/\bcodeforces\b/) ||
+            url.match(/\byosupo\b/)) {
+            message =
+                "Probably the data for your problem is not pre-computed yet. This web-interface only supports old problems.\n" +
+                    message;
+        }
+        else {
             message =
                 "Currently this web-interface only supports problems of AtCoder (atcoder.jp), Codeforces (codeforces.com), and Library-Checker (judge.yosupo.jp).\n" +
                     message;
